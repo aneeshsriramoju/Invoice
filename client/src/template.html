@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="invoicer">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Invoice Template</title>
+
+    <link href="css/invoice.css" rel="stylesheet">
+    <link href="css/xeditable.css" rel="stylesheet">
+
+    
+  </head>
+  <body ng-controller="invController">
+      <div class="container ng-hide" ng-show="contentLoaded">
+          <div class="row">
+              <div class="col-xs-12 page-header">
+                  <div class="col-xs-6">
+                      <h1>
+                          <small><span text="invoice.bill_type">{{'INVOICE'}}</span></small>
+                      </h1>
+
+                  </div>
+                  <div class="row">
+                      <div class="col-xs-6">
+                          <h4>Bill To</h4>
+
+                      </div>
+                      <div class="col-xs-6">
+                          <address>
+                              <strong><span text="invoice.from_Client">{{'Rob & Joe Traders'}}</span></strong><br>
+                              <span text="invoice.from_address">{{'2708 Southside Lane'}}</span><br>
+                              <span text="invoice.from_city">{{'Los Angeles'}}</span><br>
+                              <span text="invoice.from_State">{{'90018 CA'}}</span><br>
+                              <span text="invoice.from_Country">{{'USA'}}</span>
+                          </address>
+                      </div>
+                  </div>
+                  <small><span text="invoice.to_Heading">{{'Invoice#'}}</span></small><br>
+                  <strong><span text="invoice.to_Number">{{'INV-17'}}</span></strong><br>
+              </div>
+              <div class="col-xs-6">
+                  <table class="table-reduce-padding">
+                      <tbody>
+                          <tr>
+                              <td><p class="h4">Invoice #: </p></td>
+                              <td><p class="h5"><strong><span text="invoice.to_Heading">{{'####'}}</span></strong></p></td>
+                          </tr>
+                          <tr>
+                              <td><p class="h5">Date: </p></td>
+                              <td><p class="h5"><strong><span text="invoice.to_Number">{{'INV-17'}}</span></strong></p></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-xs-12 box">
+                  <table class="table table-condensed table-striped">
+                      <thead>
+                          <tr>
+                              <th>Invoice Date</th>
+                              <th>Terms</th>
+                              <th>Due Date</th>
+                              <th>P.O.#</th>
+                              <th>Project Name</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                              <tr>
+                              <td>
+                                  <dl>
+                                      <dt><span text="03 May 2018"></span></dt>
+                                      <dd><span text="Due On Receipt"></span></dd>
+                                      <dt><span text="03 May 2018"></span></dt>
+                                      <dt><span text="Design Project"></span></dt>
+                                  </dl>
+                              </td>
+                              <td><span text=""321014"" e-style="width: 50px"></span></td>
+                          </tr>
+                      </tbody>
+                    
+                   
+                  </table>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-xs-12 box">
+                  <table class="table table-condensed table-striped">
+                      <thead>
+                          <tr>
+                              <th>#</th>
+                              <th>Item&description</th>
+                              <th>Qty</th>
+                              <th>Rate</th>
+                              <th>Discount</th>
+                              <th>Amount</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr ng-repeat="item in invoice.line_items">
+                              <td>{{$index+1}}</td>
+                              <td>
+                                  <dl>
+                                      <dt><span editable-text="invoice.line_items[$index].#">{{item.index || '1'}}</span></dt>
+                                      <dd><span editable-text="invoice.line_items[$index].Item&description">{{item.desc || "Description goes here"}}</span></dd>
+                                  </dl>
+                              </td>
+                              <td><span editable-text="invoice.line_items[$index].Qty" e-style="width: 50px">{{item.Qty || '1.00'}}</span></td>
+                              <td>$<span editable-text="invoice.line_items[$index].Rate" e-style="width: 50px">{{item.Rate || '300.000'}}</span></td>
+                              <td>$<span editable-text="invoice.line_items[$index].Discount" e-style="width: 50px">{{item.Discount || '0'}}</span></td>
+                              <td>${{item.Qty*item.Rate}}</td>
+                          </tr>
+                          <tr id="dynamicInsert" class="warning" ng-show="invoice.temp.title">
+                              <td>{{invoice.line_items.length + 1}}</td>
+                              <td>
+                                  <dl>
+                                      <dt>{{invoice.temp.#}}</dt>
+                                      <dd>{{invoice.temp.Item&description}}</dd>
+                                  </dl>
+                              </td>
+                              <td>{{invoice.temp.Qty}}</td>
+                              <td>${{invoice.temp.Rate}}</td>
+                              <td>${{invoice.temp.Qty * invoice.temp.Rate}}</td>
+                          </tr>
+                      </tbody>
+                      <tfoot class="subtotal">
+                          <tr>
+                              <td colspan=3></td>
+                              <td><p class="h5">Subtotal: </p></td>
+                              <td><p class="h5"><strong>${{ getSubTotal() }}</strong></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan=3></td>
+                              <td><p class="h5">Sample Tax1: </p></td>
+                              <td><p class="h5"><strong><span text="invoice.client_Sample Tax1" e-style="width: 50px">${{"11.750"}}</span></strong></p></td>
+                          </tr>
+
+                          <tr>
+                              <td colspan=3></td>
+                              <td><p class="h5">Sample Tax2: </p></td>
+                              <td><p class="h5"><strong><span text="invoice.client_Sample Tax2" e-style="width: 50px">${{"21.000"}}</span></strong></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan=3></td>
+                              <td><p class="h5">Total: </p></td>
+                              <td><p class="h5"><strong>${{ getSubTotal()+Sample Tax1+Sample Tax2 }}</strong></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan=3></td>
+                              <td><p class="h5">Payment Made: </p></td>
+                              <td><p class="h5"><strong><span text="invoice.client_Payment Made" e-style="width: 50px">${{"(-)100.000"}}</span></strong></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan=3></td>
+                              <td><p class="h5">Balance Due: </p></td>
+                              <td><p class="h5"><strong>${{ getSubTotal()-100.000}}</strong></p></td>
+                          </tr>
+                      </tfoot>
+                  </table>
+              </div>
+          </div>
+          <div class="col-xs-6">
+              <p>Your business is greatly appreciated!</p>
+          </div>
+          <div class="editContainer" ng-mouseenter="showEditor=true" ng-mouseleave="showEditor=false">
+              <div ng-show="showEditor" ng-include src="'editor.html'"></div>
+          </div>
+      </div>
+  </body>
+</html>
